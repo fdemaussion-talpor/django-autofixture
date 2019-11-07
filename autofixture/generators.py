@@ -3,7 +3,7 @@ import datetime
 import uuid
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.contrib.gis.geos import Point
+
 try:
     from django.utils import lorem_ipsum
 except ImportError:
@@ -671,6 +671,7 @@ class UUIDGenerator(Generator):
 class PointFieldGenerator(Generator):
 
     def generate(self):
+        from django.contrib.gis.geos import Point
         latitude = random.uniform(-90, 90)
         longitude = random.uniform(-180, 180)
         return Point(longitude, latitude)
