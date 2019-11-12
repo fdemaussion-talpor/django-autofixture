@@ -271,9 +271,9 @@ class AutoFixtureBase(object):
             return None
         if (
             field.default is not fields.NOT_PROVIDED and
-            not self.overwrite_defaults and
-            field.name not in self.field_values):
-                return None
+                not self.overwrite_defaults and
+                field.name not in self.field_values):
+            return None
         kwargs = {}
 
         if field.name in self.field_values:
@@ -298,7 +298,8 @@ class AutoFixtureBase(object):
                     autofixture.get(
                         get_remote_field_to(field),
                         follow_fk=self.follow_fk.get_deep_links(field.name),
-                        generate_fk=self.generate_fk.get_deep_links(field.name)),
+                        generate_fk=self.generate_fk.get_deep_links(field.name)
+                    ),
                     limit_choices_to=get_remote_field(field).limit_choices_to)
             if field.name in self.follow_fk:
                 selected = generators.InstanceSelector(

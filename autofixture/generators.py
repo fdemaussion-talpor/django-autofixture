@@ -10,6 +10,7 @@ from decimal import Decimal
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
+from django.db.models import Q
 if 'django.contrib.gis' in settings.INSTALLED_APPS:
     from django.contrib.gis.geos import Point
 
@@ -544,13 +545,16 @@ class InstanceGenerator(Generator):
     '''
     def __init__(self, autofixture, limit_choices_to=None, *args, **kwargs):
         self.autofixture = autofixture
-        limit_choices_to = limit_choices_to or {}
-        for lookup, value in limit_choices_to.items():
-            bits = lookup.split('__')
-            if len(bits) == 1 or \
-                    len(bits) == 2 and bits[1] in ('exact', 'iexact'):
-                self.autofixture.add_field_value(bits[0],
-                                                 StaticGenerator(value))
+        if not isinstance(limit_choices_to, Q):
+            # Due to complexity of Q expressions these are not supported
+            limit_choices_to = limit_choices_to or {}
+            for lookup, value in limit_choices_to.items():
+                bits = lookup.split('__')
+                if len(bits) == 1 or \
+                        len(bits) == 2 and bits[1] in ('exact', 'iexact'):
+                    self.autofixture.add_field_value(
+                        bits[0],
+                        StaticGenerator(value))
         super(InstanceGenerator, self).__init__(*args, **kwargs)
 
     def generate(self):
